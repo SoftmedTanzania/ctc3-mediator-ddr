@@ -1,31 +1,56 @@
 {
-  "urn": "urn:uuid:3412e80a-cf23-4a8d-a7fe-2647a9baf590",
+  "urn": "urn:uuid:76fbf737-d9cb-49fa-bc86-3506c2cd3693",
   "version": "0.1.0",
-  "name": "CTC3 - ESRS Mediator",
-  "description": "A mediator to handle integrations between CTC3 and ESRS",
+  "name": "DDR - CTC3 Mediator",
+  "description": "A mediator to handle integrations between DDR and CTC3",
   "endpoints": [
     {
-      "name": "esrs-mediator-ctc3 Request Route",
+      "name": "ctc3-mediator-ddr Results Route",
       "host": "localhost",
-      "port": "3050",
-      "path": "/samples",
+      "port": "3051",
+      "path": "/results",
+      "type": "http"
+    },
+    {
+      "name": "ctc3-mediator-ddr Rejections Route",
+      "host": "localhost",
+      "port": "3051",
+      "path": "/rejections",
       "type": "http"
     }
   ],
   "defaultChannelConfig": [
     {
-      "name": "CTC3 - ESRS Send Test Requests Channel",
-      "urlPattern": "^/ctc3-esrs-test-requests$",
+      "name": "DDR - CTC3 Send Rejections",
+      "urlPattern": "^/send-rejections$",
       "type": "http",
       "allow": [
-        "ctc3-role"
+        "ddr-role"
       ],
       "routes": [
         {
-          "name": "CTC3 - ESRS Send Test Requests Route",
+          "name": "ctc3-mediator-ddr Requests Route",
           "host": "localhost",
-          "port": "3050",
-          "path": "/samples",
+          "port": "3051",
+          "path": "/requests",
+          "type": "http",
+          "primary": "true"
+        }
+      ]
+    },
+    {
+      "name": "DDR - CTC3 Send Results",
+      "urlPattern": "^/send-results$",
+      "type": "http",
+      "allow": [
+        "ddr-role"
+      ],
+      "routes": [
+        {
+          "name": "ctc3-mediator-ddr Requests Route",
+          "host": "localhost",
+          "port": "3051",
+          "path": "/requests",
           "type": "http",
           "primary": "true"
         }
@@ -34,9 +59,57 @@
   ],
   "configDefs": [
     {
-      "param": "destinationConnectionProperties",
-      "displayName": "Destination Connection Properties",
-      "description": "Configuration to set the hostname, port and path for the destination server",
+      "param": "resultsDestinationConnectionProperties",
+      "displayName": "Test Results Destination Connection Properties",
+      "description": "Configuration to set the hostname, port and path for the destination server for receiving Test Results",
+      "type": "struct",
+      "template": [
+        {
+          "param": "destinationHost",
+          "displayName": "Destination Host Name",
+          "description": "IP address/hostname of the destination server. e.g 192.168.1.1",
+          "type": "string"
+        },
+        {
+          "param": "destinationPort",
+          "displayName": "Destination Port Number",
+          "description": "The port number of the destination server. e.g 8080",
+          "type": "number"
+        },
+        {
+          "param": "destinationRequestPath",
+          "displayName": "Destination Test Request Path",
+          "description": "The destination test request path",
+          "type": "string"
+        },
+        {
+          "param": "destinationScheme",
+          "displayName": "Destination Scheme",
+          "description": "Whether the destination is using HTTP or HTTPS requests.",
+          "type": "option",
+          "values": [
+            "http",
+            "https"
+          ]
+        },
+        {
+          "param": "destinationUsername",
+          "displayName": "Destination Username",
+          "description": "The destination username for receiving data from the HIM.",
+          "type": "string"
+        },
+        {
+          "param": "destinationPassword",
+          "displayName": "Destination Password",
+          "description": "The destination password for receiving data from the HIM.",
+          "type": "password"
+        }
+      ]
+    },
+    {
+      "param": "rejectionsDestinationConnectionProperties",
+      "displayName": "Sample Rejections Destination Connection Properties",
+      "description": "Configuration to set the hostname, port and path for the destination server for receiving Samples Rejections",
       "type": "struct",
       "template": [
         {
@@ -83,10 +156,18 @@
     }
   ],
   "config": {
-    "destinationConnectionProperties": {
+    "resultsDestinationConnectionProperties": {
       "destinationHost": "127.0.0.1",
       "destinationPort": "80",
-      "destinationRequestPath": "/sample_path",
+      "destinationRequestPath": "/results_path",
+      "destinationScheme": "http",
+      "destinationUsername": "username",
+      "destinationPassword":"password"
+    },
+    "rejectionsDestinationConnectionProperties": {
+      "destinationHost": "127.0.0.1",
+      "destinationPort": "80",
+      "destinationRequestPath": "/rejection_path",
       "destinationScheme": "http",
       "destinationUsername": "username",
       "destinationPassword":"password"

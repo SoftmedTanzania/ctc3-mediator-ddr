@@ -8,8 +8,8 @@
     </appender>
     <appender name="FILE" class="org.apache.log4j.rolling.RollingFileAppender">
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="ActiveFileName" value="esrs-mediator-ctc3.log"/>
-            <param name="FileNamePattern" value="esrs-mediator-ctc3.%d{yyyy-MM-dd}.log.gz"/>
+            <param name="ActiveFileName" value="ctc3-mediator-ddr.log"/>
+            <param name="FileNamePattern" value="ctc3-mediator-ddr.%d{yyyy-MM-dd}.log.gz"/>
         </rollingPolicy>
         <triggeringPolicy class="org.apache.log4j.rolling.SizeBasedTriggeringPolicy">
             <param name="MaxFileSize" value="5000"/>
