@@ -6,7 +6,8 @@ import akka.event.LoggingAdapter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.openhim.mediator.engine.*;
-import tz.go.moh.him.esrs.mediator.ctc3.orchestrator.RequestOrchestrator;
+import tz.go.moh.him.esrs.mediator.ctc3.orchestrator.RejectionsOrchestrator;
+import tz.go.moh.him.esrs.mediator.ctc3.orchestrator.ResultsOrchestrator;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +21,8 @@ public class MediatorMain {
 
         //TODO Configure routes here
         //...
-        routingTable.addRoute("/samples", RequestOrchestrator.class);
+        routingTable.addRoute("/results", ResultsOrchestrator.class);
+        routingTable.addRoute("/rejections", RejectionsOrchestrator.class);
 
         return routingTable;
     }

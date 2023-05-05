@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaseOrchestrator extends UntypedActor {
-
     /**
      * The serializer
      */
@@ -35,19 +34,11 @@ public abstract class BaseOrchestrator extends UntypedActor {
      * The mediator configuration.
      */
     protected final MediatorConfig config;
-
     /**
      * Represents a mediator request.
      */
     protected MediatorHTTPRequest workingRequest;
-
     protected JSONObject errorMessageResource;
-
-    /**
-     * Handles the received message.
-     *
-     * @param msg The received message.
-     */
 
     /**
      * Initializes a new instance of the {@link BaseOrchestrator} class.
@@ -67,11 +58,17 @@ public abstract class BaseOrchestrator extends UntypedActor {
     }
 
     /**
+     * Handles the received message.
+     *
+     * @param msg The received message.
+     */
+
+    /**
      * Handle sending of data to esrs
      *
      * @param msg to be sent
      */
-    public void sendDataToESRS(String msg) {
+    public void sendDataToCtc3(String msg, REQUEST_TYPE requestType) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
@@ -80,7 +77,13 @@ public abstract class BaseOrchestrator extends UntypedActor {
         String path;
         int portNumber;
 
-        JSONObject connectionProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("destinationConnectionProperties");
+        JSONObject connectionProperties;
+        if (requestType == REQUEST_TYPE.RESULTS) {
+            connectionProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("resultsDestinationConnectionProperties");
+        } else {
+            connectionProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("rejectionsDestinationConnectionProperties");
+        }
+
 
         if (!connectionProperties.getString("destinationUsername").isEmpty() && !connectionProperties.getString("destinationPassword").isEmpty()) {
             String auth = connectionProperties.getString("destinationUsername") + ":" + connectionProperties.getString("destinationPassword");
@@ -104,6 +107,11 @@ public abstract class BaseOrchestrator extends UntypedActor {
 
         ActorSelection httpConnector = getContext().actorSelection(config.userPathFor("http-connector"));
         httpConnector.tell(forwardToEsrs, getSelf());
+    }
+
+    public enum REQUEST_TYPE {
+        RESULTS,
+        REJECTIONS
     }
 
 
